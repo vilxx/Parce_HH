@@ -4,7 +4,7 @@ import math
 
 app = Flask(__name__)
 
-def fetch_vacancies(keyword, area=1, min_salary=0, page=0, per_page=20):
+def fetch_vacancies(keyword, area=1, min_salary=0, page=0, per_page=10):
     url = "https://api.hh.ru/vacancies"
     headers = {
         "User-Agent": "Your User Agent",
@@ -48,7 +48,7 @@ def index():
     vacancies = []
     total_pages = 0
     current_page = int(request.args.get("page", 1)) - 1
-    per_page = 10  # Количество вакансий на странице
+    per_page = 40  # Количество вакансий на странице
 
     # Параметры фильтрации
     keyword = request.form.get("keyword") or request.args.get("keyword", "")
