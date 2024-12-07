@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacancies Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form select {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 422px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        form button:hover {
+            background-color: #0056b3;
+        }
+        .vacancy {
+            background-color: #ffffff;
+            margin: 20px auto;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+        .vacancy h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .vacancy p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .vacancy a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .vacancy a:hover {
+            text-decoration: underline;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
+        .pagination a.active {
+            background-color: #0056b3;
+            pointer-events: none;
+        }
+            .vacancies-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Два столбца */
+        gap: 20px; /* Расстояние между карточками */
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        }
+        .vacancy {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .vacancy h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .vacancy p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .vacancy a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .vacancy a:hover {
+            text-decoration: underline;
+        }
+            .vacancies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Два столбца */
+            gap: 20px; /* Расстояние между карточками */
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .vacancy {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .vacancy h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .vacancy p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .vacancy a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .vacancy a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Поиск вакансии:</h1>
+    <form method="POST">
+        <label for="keyword">Вакансия для поиска:</label>
+        <input type="text" id="keyword" name="keyword" value="{{ keyword }}" required placeholder="Ввести название вакансии">
+
+        <label for="area">Выбор города поиска вакансии:</label>
+        <select id="area" name="area" required>
+            <option value="1" {% if area == "1" %}selected{% endif %}>Москва</option>
+            <option value="2" {% if area == "2" %}selected{% endif %}>Санкт-Петербург</option>
+            <option value="1202" {% if area == "1202" %}selected{% endif %}>Новосибирск</option>
+            <option value="3" {% if area == "3" %}selected{% endif %}>Екатеринбург</option>
+            <option value="4" {% if area == "4" %}selected{% endif %}>Казань</option>
+            <option value="0" {% if area == "0" %}selected{% endif %}>Все города</option>
+        </select>
+
+        <label for="min_salary">Минимальная зарплата от:</label>
+        <input type="number" id="min_salary" name="min_salary" value="{{ min_salary }}" placeholder="0">
+
+        <button type="submit">Поиск</button>
+    </form>
+
+    {% if vacancies %}
+        <h2>Доступные вакансии:</h2>
+        <div class="vacancies-grid">
+            {% for vacancy in vacancies %}
+                <div class="vacancy">
+                    <h3>{{ vacancy.title }}</h3>
+                    <p><strong>Компания:</strong> {{ vacancy.company }}</p>
+                    <p><strong>Город:</strong> {{ vacancy.city }}</p>
+                    <p><strong>Описание:</strong> {{ vacancy.description }}</p>
+                    <p>
+                        <strong>Зарплата:</strong>
+                        {% if vacancy.salary %}
+                            {% if vacancy.salary.from %} от {{ vacancy.salary.from }} {% endif %}
+                            {% if vacancy.salary.to %} до {{ vacancy.salary.to }} {% endif %}
+                        {% else %}
+                            не указана
+                        {% endif %}
+                    </p>
+                    <a href="{{ vacancy.url }}" target="_blank">Детальная информация на сайте hh.ru</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a href="?keyword={{ keyword }}&area={{ area }}&min_salary={{ min_salary }}&page={{ current_page - 1 }}">Previous</a>
+            {% endif %}
+
+            <!-- Первая страница -->
+            {% if current_page > 3 %}
+                <a href="?keyword={{ keyword }}&area={{ area }}&min_salary={{ min_salary }}&page=1">1</a>
+                {% if current_page > 4 %}
+                    <span>...</span>
+                {% endif %}
+            {% endif %}
+
+            <!-- Пять ближайших страниц -->
+            {% for i in range(current_page - 2, current_page + 3) %}
+                {% if i > 0 and i <= total_pages %}
+                    <a href="?keyword={{ keyword }}&area={{ area }}&min_salary={{ min_salary }}&page={{ i }}"
+                       class="{% if i == current_page %}active{% endif %}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Последняя страница -->
+            {% if current_page < total_pages - 2 %}
+                {% if current_page < total_pages - 3 %}
+                    <span>...</span>
+                {% endif %}
+                <a href="?keyword={{ keyword }}&area={{ area }}&min_salary={{ min_salary }}&page={{ total_pages }}">{{ total_pages }}</a>
+            {% endif %}
+
+            {% if current_page < total_pages %}
+                <a href="?keyword={{ keyword }}&area={{ area }}&min_salary={{ min_salary }}&page={{ current_page + 1 }}">Next</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>
